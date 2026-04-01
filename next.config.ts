@@ -4,6 +4,9 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
+  env: {
+    SITE_PASSWORD: process.env.SITE_PASSWORD || "",
+  },
   images: {
     remotePatterns: [
       {

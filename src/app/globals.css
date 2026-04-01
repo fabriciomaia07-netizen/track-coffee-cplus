@@ -1,0 +1,141 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-poppins: "poppins", sans-serif;
+  --font-sans: "poppins", sans-serif;
+  --font-mono: monospace;
+  --font-heading: "poppins", sans-serif;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* C+ Brand: White + Red #FF0100 */
+  --background: #ffffff;
+  --foreground: #151515;
+  --card: #ffffff;
+  --card-foreground: #151515;
+  --popover: #ffffff;
+  --popover-foreground: #151515;
+  --primary: #FF0100;
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f4;
+  --secondary-foreground: #151515;
+  --muted: #f4f4f4;
+  --muted-foreground: #6b6b6b;
+  --accent: #f4f4f4;
+  --accent-foreground: #151515;
+  --destructive: #FF0100;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #FF0100;
+  --chart-1: #FF0100;
+  --chart-2: #cc0100;
+  --chart-3: #990100;
+  --chart-4: #660100;
+  --chart-5: #330100;
+  --radius: 0.5rem;
+  --sidebar: #151515;
+  --sidebar-foreground: #f1f1f1;
+  --sidebar-primary: #FF0100;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a2a2a;
+  --sidebar-accent-foreground: #f1f1f1;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #FF0100;
+}
+
+.dark {
+  --background: #151515;
+  --foreground: #f1f1f1;
+  --card: #1e1e1e;
+  --card-foreground: #f1f1f1;
+  --popover: #1e1e1e;
+  --popover-foreground: #f1f1f1;
+  --primary: #FF0100;
+  --primary-foreground: #ffffff;
+  --secondary: #2a2a2a;
+  --secondary-foreground: #f1f1f1;
+  --muted: #2a2a2a;
+  --muted-foreground: #999999;
+  --accent: #2a2a2a;
+  --accent-foreground: #f1f1f1;
+  --destructive: #FF0100;
+  --border: #2a2a2a;
+  --input: #2a2a2a;
+  --ring: #FF0100;
+  --chart-1: #FF0100;
+  --chart-2: #ff3333;
+  --chart-3: #ff6666;
+  --chart-4: #ff9999;
+  --chart-5: #ffcccc;
+  --sidebar: #0a0a0a;
+  --sidebar-foreground: #f1f1f1;
+  --sidebar-primary: #FF0100;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #1e1e1e;
+  --sidebar-accent-foreground: #f1f1f1;
+  --sidebar-border: #2a2a2a;
+  --sidebar-ring: #FF0100;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: "poppins", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  html {
+    font-family: "poppins", sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "poppins", sans-serif;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+}

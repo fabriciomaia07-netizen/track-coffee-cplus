@@ -2,6 +2,19 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Site-wide password protection
+  const sitePassword = process.env.SITE_PASSWORD;
+  if (sitePassword && pathname !== "/gate") {
+    const siteAccess = request.cookies.get("site_access")?.value;
+    if (siteAccess !== "granted") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/gate";
+      return NextResponse.redirect(url);
+    }
+  }
+
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -33,8 +46,6 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
-
   // Redirect unauthenticated users to login
   if (!user && pathname.startsWith("/dashboard")) {
     const url = request.nextUrl.clone();
@@ -60,5 +71,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/login", "/register", "/dashboard/:path*"],
+  matcher: ["/", "/login", "/register", "/dashboard/:path*", "/gate"],
 };

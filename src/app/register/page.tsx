@@ -103,7 +103,7 @@ export default function RegisterPage() {
                 </SelectTrigger>
                 <SelectContent>
                   {stores.map((store) => (
-                    <SelectItem key={store.id} value={store.id}>
+                    <SelectItem key={store.id} value={store.id} label={store.name}>
                       {store.name}
                     </SelectItem>
                   ))}

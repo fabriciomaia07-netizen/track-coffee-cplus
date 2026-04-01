@@ -65,6 +65,26 @@ export async function logout() {
   redirect("/login");
 }
 
+export async function verifySitePassword(formData: FormData) {
+  const password = formData.get("site_password") as string;
+  const sitePassword = process.env.SITE_PASSWORD;
+
+  if (!sitePassword || password !== sitePassword) {
+    return { error: "Invalid password" };
+  }
+
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  cookieStore.set("site_access", "granted", {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30, // 30 days
+    httpOnly: true,
+    sameSite: "lax",
+  });
+
+  redirect("/login");
+}
+
 export async function setLocale(locale: string) {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();

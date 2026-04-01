@@ -20,6 +20,7 @@ import {
   Wine,
   BookOpen,
   Settings,
+  Coffee,
 } from "lucide-react";
 
 interface AppSidebarProps {
@@ -55,6 +56,11 @@ export function AppSidebar({ profile }: AppSidebarProps) {
       label: t("profiles"),
       href: "/dashboard/perfis",
       icon: Wine,
+    },
+    {
+      label: t("roastedCoffee"),
+      href: "/dashboard/torradas",
+      icon: Coffee,
     },
     {
       label: t("recipes"),

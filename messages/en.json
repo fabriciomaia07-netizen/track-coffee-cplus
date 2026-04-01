@@ -26,6 +26,7 @@
     "roasts": "Roasts",
     "profiles": "Flavor Profiles",
     "recipes": "Recipes",
+    "roastedCoffee": "Roasted Coffee",
     "admin": "Admin"
   },
   "auth": {
@@ -155,6 +156,24 @@
       "other": "Other"
     },
     "detail": "Recipe Details"
+  },
+  "roastedCoffee": {
+    "title": "Roasted Coffee Stock",
+    "coffeeName": "Coffee",
+    "origin": "Origin",
+    "variety": "Variety",
+    "roastLevel": "Roast Level",
+    "currentStock": "Stock (kg)",
+    "roastDate": "Roast Date",
+    "notes": "Notes",
+    "noStock": "No roasted coffee in stock yet.",
+    "noStockDescription": "Roasted coffee appears here automatically when roast sessions are recorded.",
+    "levels": {
+      "light": "Light",
+      "medium": "Medium",
+      "medium-dark": "Medium-Dark",
+      "dark": "Dark"
+    }
   },
   "admin": {
     "title": "Administration",

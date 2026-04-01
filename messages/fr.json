@@ -26,6 +26,7 @@
     "roasts": "Torréfactions",
     "profiles": "Profils de Saveur",
     "recipes": "Recettes",
+    "roastedCoffee": "Café Torréfié",
     "admin": "Admin"
   },
   "auth": {
@@ -155,6 +156,24 @@
       "other": "Autre"
     },
     "detail": "Détails de la Recette"
+  },
+  "roastedCoffee": {
+    "title": "Stock Café Torréfié",
+    "coffeeName": "Café",
+    "origin": "Origine",
+    "variety": "Variété",
+    "roastLevel": "Niveau de Torréfaction",
+    "currentStock": "Stock (kg)",
+    "roastDate": "Date de Torréfaction",
+    "notes": "Notes",
+    "noStock": "Aucun café torréfié en stock.",
+    "noStockDescription": "Le café torréfié apparaît ici automatiquement lorsque des séances de torréfaction sont enregistrées.",
+    "levels": {
+      "light": "Claire",
+      "medium": "Moyenne",
+      "medium-dark": "Moyenne-Foncée",
+      "dark": "Foncée"
+    }
   },
   "admin": {
     "title": "Administration",

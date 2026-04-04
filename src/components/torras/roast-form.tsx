@@ -28,6 +28,7 @@ interface Lot {
   origin_country: string;
   variety: string;
   current_stock_kg: number;
+  notes: string | null;
 }
 
 interface RoastFormProps {
@@ -40,6 +41,15 @@ export function RoastForm({ lots }: RoastFormProps) {
   const [loading, setLoading] = useState(false);
   const [inputWeight, setInputWeight] = useState("");
   const [outputWeight, setOutputWeight] = useState("");
+  const [autoEstimate, setAutoEstimate] = useState(true);
+
+  const estimatedLossPercent: Record<string, number> = {
+    light: 12,
+    medium: 15,
+    "medium-dark": 17,
+    dark: 20,
+  };
+  const [roastLevel, setRoastLevel] = useState("medium");
 
   const lossPercent =
     inputWeight && outputWeight
@@ -76,11 +86,14 @@ export function RoastForm({ lots }: RoastFormProps) {
                 <SelectValue placeholder={t("roasts.greenLot")} />
               </SelectTrigger>
               <SelectContent>
-                {lots.map((lot) => (
-                  <SelectItem key={lot.id} value={lot.id}>
-                    {lot.origin_country} - {lot.variety} ({t("roasts.availableStock", { stock: lot.current_stock_kg })})
-                  </SelectItem>
-                ))}
+                {lots.map((lot) => {
+                  const coffeeName = lot.notes?.split(".")[0] || `${lot.origin_country} - ${lot.variety}`;
+                  return (
+                    <SelectItem key={lot.id} value={lot.id}>
+                      {coffeeName} ({t("roasts.availableStock", { stock: lot.current_stock_kg })})
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
@@ -107,7 +120,16 @@ export function RoastForm({ lots }: RoastFormProps) {
                 min="0"
                 required
                 value={inputWeight}
-                onChange={(e) => setInputWeight(e.target.value)}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  setInputWeight(val);
+                  if (autoEstimate && val) {
+                    const loss = estimatedLossPercent[roastLevel] || 15;
+                    setOutputWeight(
+                      (parseFloat(val) * (1 - loss / 100)).toFixed(2)
+                    );
+                  }
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -120,8 +142,18 @@ export function RoastForm({ lots }: RoastFormProps) {
                 min="0"
                 required
                 value={outputWeight}
-                onChange={(e) => setOutputWeight(e.target.value)}
+                onChange={(e) => {
+                  setOutputWeight(e.target.value);
+                  setAutoEstimate(false);
+                }}
               />
+              {autoEstimate && outputWeight && (
+                <p className="text-xs text-muted-foreground">
+                  {t("roasts.estimatedLoss", {
+                    percent: estimatedLossPercent[roastLevel] || 15,
+                  })}
+                </p>
+              )}
             </div>
           </div>
 
@@ -136,7 +168,21 @@ export function RoastForm({ lots }: RoastFormProps) {
 
           <div className="space-y-2">
             <Label htmlFor="roast_level">{t("roasts.roastLevel")}</Label>
-            <Select name="roast_level" required defaultValue="medium">
+            <Select
+              name="roast_level"
+              required
+              defaultValue="medium"
+              onValueChange={(val) => {
+                const level = (val as string) ?? "medium";
+                setRoastLevel(level);
+                if (autoEstimate && inputWeight) {
+                  const loss = estimatedLossPercent[level] || 15;
+                  setOutputWeight(
+                    (parseFloat(inputWeight) * (1 - loss / 100)).toFixed(2)
+                  );
+                }
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder={t("roasts.roastLevel")} />
               </SelectTrigger>

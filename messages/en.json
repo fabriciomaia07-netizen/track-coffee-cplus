@@ -113,7 +113,8 @@
       "dark": "Dark"
     },
     "detail": "Roast Details",
-    "roastedInventory": "Roasted Inventory"
+    "roastedInventory": "Roasted Inventory",
+    "estimatedLoss": "Auto-estimated ~{percent}% water loss"
   },
   "profiles": {
     "title": "Flavor Profiles",

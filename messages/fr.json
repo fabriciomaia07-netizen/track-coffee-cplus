@@ -113,7 +113,8 @@
       "dark": "Foncée"
     },
     "detail": "Détails de la Torréfaction",
-    "roastedInventory": "Inventaire Torréfié"
+    "roastedInventory": "Inventaire Torréfié",
+    "estimatedLoss": "Estimation auto ~{percent}% perte d'eau"
   },
   "profiles": {
     "title": "Profils de Saveur",

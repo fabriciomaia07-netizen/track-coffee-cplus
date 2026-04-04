@@ -8,7 +8,7 @@ export default async function NewRoastPage() {
 
   const { data: lots } = await supabase
     .from("green_coffee_lots")
-    .select("id, origin_country, variety, current_stock_kg")
+    .select("id, origin_country, variety, current_stock_kg, notes")
     .gt("current_stock_kg", 0)
     .order("origin_country") as {
     data: Array<{
@@ -16,6 +16,7 @@ export default async function NewRoastPage() {
       origin_country: string;
       variety: string;
       current_stock_kg: number;
+      notes: string | null;
     }> | null;
   };
 

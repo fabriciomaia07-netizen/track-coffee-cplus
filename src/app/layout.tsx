@@ -18,7 +18,7 @@ export default async function RootLayout({
   const messages = await getMessages();
 
   return (
-    <html lang={locale} className="h-full antialiased">
+    <html lang={locale} className="h-full antialiased" suppressHydrationWarning>
       <head>
         <link rel="stylesheet" href="https://use.typekit.net/hqp2tfp.css" />
       </head>

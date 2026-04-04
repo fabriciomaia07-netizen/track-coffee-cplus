@@ -61,6 +61,7 @@
   "inventory": {
     "title": "Green Bean Inventory",
     "addLot": "Add New Lot",
+    "coffeeName": "Coffee",
     "importExcel": "Import Excel",
     "origin": "Origin Country",
     "farm": "Farm / Producer",

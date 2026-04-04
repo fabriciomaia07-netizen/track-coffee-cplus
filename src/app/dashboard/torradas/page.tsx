@@ -19,7 +19,8 @@ export default async function TorradasPage() {
           origin_country,
           variety,
           farm_producer,
-          label_image_url
+          label_image_url,
+          notes
         )
       )
     `

@@ -61,6 +61,7 @@
   "inventory": {
     "title": "Inventaire Café Vert",
     "addLot": "Ajouter un Lot",
+    "coffeeName": "Café",
     "importExcel": "Importer Excel",
     "origin": "Pays d'origine",
     "farm": "Ferme / Producteur",

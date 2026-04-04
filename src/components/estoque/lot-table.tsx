@@ -24,6 +24,7 @@ interface Lot {
   supplier: string | null;
   label_image_url: string | null;
   farm_producer: string | null;
+  notes: string | null;
 }
 
 export function LotTable({ lots }: { lots: Lot[] }) {
@@ -43,59 +44,68 @@ export function LotTable({ lots }: { lots: Lot[] }) {
       <TableHeader>
         <TableRow>
           <TableHead className="w-12" />
+          <TableHead>{t("coffeeName")}</TableHead>
           <TableHead>{t("origin")}</TableHead>
           <TableHead>{t("variety")}</TableHead>
           <TableHead>{t("process")}</TableHead>
           <TableHead>{t("currentStock")}</TableHead>
           <TableHead>{t("purchaseDate")}</TableHead>
-          <TableHead>{t("supplier")}</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {lots.map((lot) => (
-          <TableRow key={lot.id} className="cursor-pointer">
-            <TableCell>
-              {lot.label_image_url ? (
-                <Image
-                  src={lot.label_image_url}
-                  alt="Label"
-                  width={32}
-                  height={32}
-                  className="size-8 rounded object-cover"
-                />
-              ) : (
-                <div className="size-8 rounded bg-muted" />
-              )}
-            </TableCell>
-            <TableCell>
-              <Link
-                href={`/dashboard/estoque/${lot.id}`}
-                className="font-medium hover:underline"
-              >
-                {lot.origin_country}
-              </Link>
-            </TableCell>
-            <TableCell>{lot.variety}</TableCell>
-            <TableCell>
-              {t(`processes.${lot.process_method}` as Parameters<typeof t>[0])}
-            </TableCell>
-            <TableCell>
-              <span className="flex items-center gap-2">
-                {lot.current_stock_kg} {tc("kg")}
-                {lot.current_stock_kg < 5 && (
-                  <Badge variant="destructive">
-                    <AlertTriangle className="size-3" />
-                    {t("lowStockWarning")}
-                  </Badge>
+        {lots.map((lot) => {
+          const coffeeName = lot.notes?.split(".")[0] || lot.origin_country;
+          return (
+            <TableRow key={lot.id} className="cursor-pointer">
+              <TableCell>
+                {lot.label_image_url ? (
+                  <Image
+                    src={lot.label_image_url}
+                    alt={coffeeName}
+                    width={40}
+                    height={40}
+                    className="size-10 rounded object-cover"
+                  />
+                ) : (
+                  <div className="size-10 rounded bg-muted" />
                 )}
-              </span>
-            </TableCell>
-            <TableCell>
-              {new Date(lot.purchase_date).toLocaleDateString()}
-            </TableCell>
-            <TableCell>{lot.supplier ?? "—"}</TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+              <TableCell>
+                <Link
+                  href={`/dashboard/estoque/${lot.id}`}
+                  className="hover:underline"
+                >
+                  <span className="font-bold text-[#FF0100]">
+                    {coffeeName}
+                  </span>
+                </Link>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
+                {lot.origin_country}
+              </TableCell>
+              <TableCell>{lot.variety}</TableCell>
+              <TableCell>
+                {t(
+                  `processes.${lot.process_method}` as Parameters<typeof t>[0]
+                )}
+              </TableCell>
+              <TableCell>
+                <span className="flex items-center gap-2">
+                  {lot.current_stock_kg} {tc("kg")}
+                  {lot.current_stock_kg < 5 && (
+                    <Badge variant="destructive">
+                      <AlertTriangle className="size-3" />
+                      {t("lowStockWarning")}
+                    </Badge>
+                  )}
+                </span>
+              </TableCell>
+              <TableCell>
+                {new Date(lot.purchase_date).toLocaleDateString()}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );

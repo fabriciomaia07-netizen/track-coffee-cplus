@@ -27,6 +27,7 @@ export interface RoastedItem {
       variety: string;
       farm_producer: string | null;
       label_image_url: string | null;
+      notes: string | null;
     };
   };
 }
@@ -59,8 +60,8 @@ export function RoastedTable({ items }: { items: RoastedItem[] }) {
       <TableHeader>
         <TableRow>
           <TableHead className="w-12" />
+          <TableHead>{t("coffeeName")}</TableHead>
           <TableHead>{t("origin")}</TableHead>
-          <TableHead>{t("variety")}</TableHead>
           <TableHead>{t("roastLevel")}</TableHead>
           <TableHead>{t("currentStock")}</TableHead>
           <TableHead>{t("roastDate")}</TableHead>
@@ -71,30 +72,33 @@ export function RoastedTable({ items }: { items: RoastedItem[] }) {
         {items.map((item) => {
           const lot = item.roast_sessions?.green_coffee_lots;
           const session = item.roast_sessions;
+          const coffeeName = lot?.notes?.split(".")[0] || `${lot?.origin_country} - ${lot?.variety}`;
           return (
             <TableRow key={item.id}>
               <TableCell>
                 {lot?.label_image_url ? (
                   <Image
                     src={lot.label_image_url}
-                    alt="Label"
-                    width={32}
-                    height={32}
-                    className="size-8 rounded object-cover"
+                    alt={coffeeName}
+                    width={40}
+                    height={40}
+                    className="size-10 rounded object-cover"
                   />
                 ) : (
-                  <div className="size-8 rounded bg-muted" />
+                  <div className="size-10 rounded bg-muted" />
                 )}
               </TableCell>
-              <TableCell className="font-medium">
+              <TableCell>
+                <span className="font-bold text-[#FF0100]">
+                  {coffeeName}
+                </span>
+                <span className="block text-xs text-muted-foreground">
+                  {lot?.variety ?? "—"}
+                </span>
+              </TableCell>
+              <TableCell className="text-muted-foreground">
                 {lot?.origin_country ?? "—"}
-                {lot?.farm_producer && (
-                  <span className="block text-xs text-muted-foreground">
-                    {lot.farm_producer}
-                  </span>
-                )}
               </TableCell>
-              <TableCell>{lot?.variety ?? "—"}</TableCell>
               <TableCell>
                 <Badge
                   className={

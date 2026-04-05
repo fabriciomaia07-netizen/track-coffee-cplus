@@ -234,6 +234,7 @@ export type Database = {
           id: string;
           store_id: string;
           roast_session_id: string | null;
+          green_coffee_lot_id: string | null;
           title: string;
           method: string;
           dose_grams: number | null;
@@ -251,6 +252,7 @@ export type Database = {
           id?: string;
           store_id: string;
           roast_session_id?: string | null;
+          green_coffee_lot_id?: string | null;
           title: string;
           method: string;
           dose_grams?: number | null;
@@ -268,6 +270,7 @@ export type Database = {
           id?: string;
           store_id?: string;
           roast_session_id?: string | null;
+          green_coffee_lot_id?: string | null;
           title?: string;
           method?: string;
           dose_grams?: number | null;

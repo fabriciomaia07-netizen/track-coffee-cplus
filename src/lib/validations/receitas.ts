@@ -29,6 +29,7 @@ export const recipeSchema = z.object({
     "other",
   ]),
   roast_session_id: optionalUuid,
+  green_coffee_lot_id: optionalUuid,
   dose_grams: optionalNumber,
   water_ml: optionalNumber,
   temperature_celsius: optionalNumber,

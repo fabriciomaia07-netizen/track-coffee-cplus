@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import Image from "next/image";
+import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Leaf, Droplets, Mountain } from "lucide-react";
 
@@ -40,8 +41,9 @@ export function CatalogGrid({ lots }: { lots: Lot[] }) {
         const description = lot.notes?.split(".").slice(1).join(".").trim() || "";
 
         return (
-          <div
+          <Link
             key={lot.id}
+            href={`/dashboard/catalogo/${lot.id}`}
             className="group overflow-hidden rounded-xl border bg-card transition-shadow hover:shadow-lg"
           >
             {lot.label_image_url ? (
@@ -98,7 +100,7 @@ export function CatalogGrid({ lots }: { lots: Lot[] }) {
                 </p>
               )}
             </div>
-          </div>
+          </Link>
         );
       })}
     </div>

@@ -27,6 +27,7 @@
     "profiles": "Flavor Profiles",
     "recipes": "Recipes",
     "roastedCoffee": "Roasted Coffee",
+    "catalog": "Catalog",
     "admin": "Admin"
   },
   "auth": {
@@ -158,6 +159,21 @@
       "other": "Other"
     },
     "detail": "Recipe Details"
+  },
+  "catalog": {
+    "title": "Coffee Catalog",
+    "origin": "Origin",
+    "variety": "Variety",
+    "process": "Process",
+    "farm": "Farm",
+    "stock": "Stock",
+    "processes": {
+      "washed": "Washed",
+      "natural": "Natural",
+      "honey": "Honey",
+      "anaerobic": "Anaerobic",
+      "other": "Other"
+    }
   },
   "roastedCoffee": {
     "title": "Roasted Coffee Stock",

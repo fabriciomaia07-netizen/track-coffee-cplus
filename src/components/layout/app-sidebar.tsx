@@ -21,6 +21,7 @@ import {
   BookOpen,
   Settings,
   Coffee,
+  Library,
 } from "lucide-react";
 
 interface AppSidebarProps {
@@ -61,6 +62,11 @@ export function AppSidebar({ profile }: AppSidebarProps) {
       label: t("roastedCoffee"),
       href: "/dashboard/torradas",
       icon: Coffee,
+    },
+    {
+      label: t("catalog"),
+      href: "/dashboard/catalogo",
+      icon: Library,
     },
     {
       label: t("recipes"),

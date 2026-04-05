@@ -27,6 +27,7 @@
     "profiles": "Profils de Saveur",
     "recipes": "Recettes",
     "roastedCoffee": "Café Torréfié",
+    "catalog": "Catalogue",
     "admin": "Admin"
   },
   "auth": {
@@ -158,6 +159,21 @@
       "other": "Autre"
     },
     "detail": "Détails de la Recette"
+  },
+  "catalog": {
+    "title": "Catalogue des Cafés",
+    "origin": "Origine",
+    "variety": "Variété",
+    "process": "Processus",
+    "farm": "Ferme",
+    "stock": "Stock",
+    "processes": {
+      "washed": "Lavé",
+      "natural": "Naturel",
+      "honey": "Honey",
+      "anaerobic": "Anaérobique",
+      "other": "Autre"
+    }
   },
   "roastedCoffee": {
     "title": "Stock Café Torréfié",

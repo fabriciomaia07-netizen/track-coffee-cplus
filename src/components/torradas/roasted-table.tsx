@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, Coffee } from "lucide-react";
+import { getCoffeeName } from "@/lib/utils";
 
 export interface RoastedItem {
   id: string;
@@ -72,7 +73,7 @@ export function RoastedTable({ items }: { items: RoastedItem[] }) {
         {items.map((item) => {
           const lot = item.roast_sessions?.green_coffee_lots;
           const session = item.roast_sessions;
-          const coffeeName = lot?.notes?.split(".")[0] || `${lot?.origin_country} - ${lot?.variety}`;
+          const coffeeName = getCoffeeName(lot ?? null);
           return (
             <TableRow key={item.id}>
               <TableCell>

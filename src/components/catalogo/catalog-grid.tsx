@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Leaf, Droplets, Mountain } from "lucide-react";
 import { processColors } from "@/lib/constants";
+import { getCoffeeName } from "@/lib/utils";
 
 interface Lot {
   id: string;
@@ -22,16 +23,16 @@ export function CatalogGrid({ lots }: { lots: Lot[] }) {
   const t = useTranslations("catalog");
 
   const sorted = [...lots].sort((a, b) => {
-    const nameA = a.notes?.split(".")[0] || a.origin_country;
-    const nameB = b.notes?.split(".")[0] || b.origin_country;
+    const nameA = getCoffeeName(a);
+    const nameB = getCoffeeName(b);
     return nameA.localeCompare(nameB);
   });
 
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {sorted.map((lot) => {
-        const coffeeName = lot.notes?.split(".")[0] || lot.origin_country;
-        const description = lot.notes?.split(".").slice(1).join(".").trim() || "";
+        const coffeeName = getCoffeeName(lot);
+        const description = "";
 
         return (
           <Link

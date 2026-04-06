@@ -190,7 +190,8 @@ export type Database = {
       flavor_profiles: {
         Row: {
           id: string;
-          roast_session_id: string;
+          roast_session_id: string | null;
+          green_coffee_lot_id: string | null;
           acidity: number | null;
           body: number | null;
           sweetness: number | null;
@@ -203,7 +204,8 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          roast_session_id: string;
+          roast_session_id?: string | null;
+          green_coffee_lot_id?: string | null;
           acidity?: number | null;
           body?: number | null;
           sweetness?: number | null;
@@ -216,7 +218,8 @@ export type Database = {
         };
         Update: {
           id?: string;
-          roast_session_id?: string;
+          roast_session_id?: string | null;
+          green_coffee_lot_id?: string | null;
           acidity?: number | null;
           body?: number | null;
           sweetness?: number | null;

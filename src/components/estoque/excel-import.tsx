@@ -453,7 +453,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
 
       for (const lot of tabularLots) {
         const coffeeName =
-          lot.notes?.split(".")[0]?.trim() || lot.origin_country;
+          lot.notes?.trim() || lot.origin_country;
         const match = findMatch(coffeeName, existingCoffees);
 
         if (match) {
@@ -490,7 +490,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
         ...editForm,
         _status: "matched",
         _matchedName:
-          editForm.notes?.split(".")[0]?.trim() || editForm.origin_country,
+          editForm.notes?.trim() || editForm.origin_country,
       };
       return updated;
     });
@@ -591,7 +591,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
             <TableBody>
               {rows.map((row, idx) => {
                 const name =
-                  row.notes?.split(".")[0]?.trim() || row.origin_country || "—";
+                  row.notes?.trim() || row.origin_country || "—";
                 return (
                   <TableRow
                     key={idx}

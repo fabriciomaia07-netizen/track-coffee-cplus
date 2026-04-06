@@ -19,8 +19,12 @@ export async function createFlavorProfile(formData: FormData) {
 
   const scaScore = parsed.data.sca_score ?? null;
 
+  const roastSessionId = parsed.data.roast_session_id || null;
+  const greenCoffeeLotId = parsed.data.green_coffee_lot_id || null;
+
   const { error } = await supabase.from("flavor_profiles").insert({
-    roast_session_id: parsed.data.roast_session_id,
+    roast_session_id: roastSessionId,
+    green_coffee_lot_id: greenCoffeeLotId,
     acidity: parsed.data.acidity,
     body: parsed.data.body,
     sweetness: parsed.data.sweetness,

@@ -25,7 +25,7 @@ export default async function ImportPage() {
   // Build unique coffee names from existing lots
   const existingCoffees = (existingLots ?? []).map((lot) => ({
     id: lot.id,
-    name: lot.notes?.split(".")[0]?.trim() || lot.origin_country,
+    name: lot.notes?.trim() || lot.origin_country,
     origin_country: lot.origin_country,
     variety: lot.variety,
     process_method: lot.process_method,

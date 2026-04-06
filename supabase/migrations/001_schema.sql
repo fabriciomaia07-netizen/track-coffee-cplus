@@ -76,7 +76,8 @@ CREATE TABLE roasted_coffee_inventory (
 -- FLAVOR PROFILES
 CREATE TABLE flavor_profiles (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  roast_session_id UUID NOT NULL REFERENCES roast_sessions(id),
+  roast_session_id UUID REFERENCES roast_sessions(id),
+  green_coffee_lot_id UUID REFERENCES green_coffee_lots(id) ON DELETE SET NULL,
   acidity INTEGER CHECK (acidity BETWEEN 1 AND 10),
   body INTEGER CHECK (body BETWEEN 1 AND 10),
   sweetness INTEGER CHECK (sweetness BETWEEN 1 AND 10),
@@ -272,6 +273,9 @@ CREATE POLICY "Torrador/admin can insert flavor profiles"
 CREATE POLICY "Torrador/admin can update flavor profiles"
   ON flavor_profiles FOR UPDATE
   USING (get_user_role() IN ('torrador', 'admin'));
+CREATE POLICY "All can view catalog flavor profiles"
+  ON flavor_profiles FOR SELECT
+  USING (green_coffee_lot_id IS NOT NULL);
 
 -- RECIPES
 CREATE POLICY "View own store or shared recipes"

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle } from "lucide-react";
+import { getCoffeeName } from "@/lib/utils";
 
 interface Lot {
   id: string;
@@ -61,7 +62,7 @@ export function LotTable({ lots, showStore = false }: LotTableProps) {
       </TableHeader>
       <TableBody>
         {lots.map((lot) => {
-          const coffeeName = lot.notes?.split(".")[0] || lot.origin_country;
+          const coffeeName = getCoffeeName(lot);
           return (
             <TableRow key={lot.id} className="cursor-pointer">
               <TableCell>

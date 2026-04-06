@@ -17,6 +17,7 @@ import { CoffeeRecipeForm } from "@/components/catalogo/coffee-recipe-form";
 import { CommentSection } from "@/components/receitas/comment-section";
 import { deleteRecipe } from "@/lib/actions/receitas";
 import { processColors } from "@/lib/constants";
+import { getCoffeeName } from "@/lib/utils";
 import type { Tables } from "@/types/database";
 
 interface Recipe {
@@ -79,8 +80,8 @@ export default async function CoffeeDetailPage({
     data: Recipe[] | null;
   };
 
-  const coffeeName = lot.notes?.split(".")[0] || lot.origin_country;
-  const description = lot.notes?.split(".").slice(1).join(".").trim() || "";
+  const coffeeName = getCoffeeName(lot);
+  const description = "";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">

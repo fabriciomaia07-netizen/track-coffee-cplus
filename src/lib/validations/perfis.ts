@@ -6,7 +6,8 @@ const optionalNumber = z.preprocess(
 );
 
 export const flavorProfileSchema = z.object({
-  roast_session_id: z.string().uuid("Select a roast session"),
+  roast_session_id: z.string().uuid().optional().or(z.literal("")),
+  green_coffee_lot_id: z.string().uuid().optional().or(z.literal("")),
   acidity: z.coerce.number().min(1).max(10),
   body: z.coerce.number().min(1).max(10),
   sweetness: z.coerce.number().min(1).max(10),

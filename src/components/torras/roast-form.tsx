@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createRoastSession } from "@/lib/actions/torras";
 import { toast } from "sonner";
+import { getCoffeeName } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -87,7 +88,7 @@ export function RoastForm({ lots }: RoastFormProps) {
               </SelectTrigger>
               <SelectContent>
                 {lots.map((lot) => {
-                  const coffeeName = lot.notes?.split(".")[0] || `${lot.origin_country} - ${lot.variety}`;
+                  const coffeeName = getCoffeeName(lot);
                   return (
                     <SelectItem key={lot.id} value={lot.id}>
                       {coffeeName} ({t("roasts.availableStock", { stock: lot.current_stock_kg })})

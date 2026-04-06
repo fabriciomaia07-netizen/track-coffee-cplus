@@ -28,6 +28,7 @@
     "recipes": "Recipes",
     "roastedCoffee": "Roasted Coffee",
     "catalog": "Catalog",
+    "manuals": "Manuals",
     "admin": "Admin"
   },
   "auth": {
@@ -191,6 +192,44 @@
       "medium": "Medium",
       "medium-dark": "Medium-Dark",
       "dark": "Dark"
+    }
+  },
+  "manuals": {
+    "title": "Barista Manuals",
+    "description": "Download the C+ manuals and guides for your daily work.",
+    "categories": {
+      "espressoMilk": "Espresso & Milk",
+      "filterCoffee": "Filter Coffee",
+      "drinkPreparation": "Drinks",
+      "cleaningStandards": "Cleaning",
+      "baristaAttire": "Attire",
+      "pocketWorkflow": "Workflow"
+    },
+    "items": {
+      "espressoMilk": {
+        "title": "Barista Manual — Espresso & Milk",
+        "description": "Complete guide for espresso extraction and milk steaming techniques."
+      },
+      "filterCoffee": {
+        "title": "Barista Manual — Filter Coffee",
+        "description": "Step-by-step instructions for V60, Chemex, and other filter methods."
+      },
+      "drinkPreparation": {
+        "title": "Drink Preparation Guide",
+        "description": "Recipes and standards for all drinks on the C+ menu."
+      },
+      "cleaningStandards": {
+        "title": "Cleaning & Station Standards",
+        "description": "Daily, weekly, and deep-cleaning routines for every station."
+      },
+      "baristaAttire": {
+        "title": "Barista Attire Guide",
+        "description": "Dress code and uniform standards for the C+ team."
+      },
+      "pocketWorkflow": {
+        "title": "Pocket Workflow Guide",
+        "description": "Quick-reference card for opening, closing, and shift handover."
+      }
     }
   },
   "admin": {

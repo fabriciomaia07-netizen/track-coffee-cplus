@@ -28,6 +28,7 @@
     "recipes": "Recettes",
     "roastedCoffee": "Café Torréfié",
     "catalog": "Catalogue",
+    "manuals": "Manuels",
     "admin": "Admin"
   },
   "auth": {
@@ -191,6 +192,44 @@
       "medium": "Moyenne",
       "medium-dark": "Moyenne-Foncée",
       "dark": "Foncée"
+    }
+  },
+  "manuals": {
+    "title": "Manuels Barista",
+    "description": "Téléchargez les manuels et guides C+ pour votre travail quotidien.",
+    "categories": {
+      "espressoMilk": "Espresso & Lait",
+      "filterCoffee": "Café Filtre",
+      "drinkPreparation": "Boissons",
+      "cleaningStandards": "Nettoyage",
+      "baristaAttire": "Tenue",
+      "pocketWorkflow": "Workflow"
+    },
+    "items": {
+      "espressoMilk": {
+        "title": "Manuel Barista — Espresso & Lait",
+        "description": "Guide complet pour l'extraction espresso et les techniques de mousse de lait."
+      },
+      "filterCoffee": {
+        "title": "Manuel Barista — Café Filtre",
+        "description": "Instructions étape par étape pour V60, Chemex et autres méthodes filtre."
+      },
+      "drinkPreparation": {
+        "title": "Guide de Préparation des Boissons",
+        "description": "Recettes et standards pour toutes les boissons du menu C+."
+      },
+      "cleaningStandards": {
+        "title": "Nettoyage & Standards de Station",
+        "description": "Routines de nettoyage quotidiennes, hebdomadaires et en profondeur."
+      },
+      "baristaAttire": {
+        "title": "Guide Tenue Barista",
+        "description": "Code vestimentaire et standards d'uniforme pour l'équipe C+."
+      },
+      "pocketWorkflow": {
+        "title": "Guide Workflow de Poche",
+        "description": "Référence rapide pour l'ouverture, la fermeture et le passage de relais."
+      }
     }
   },
   "admin": {

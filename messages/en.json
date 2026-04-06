@@ -98,7 +98,13 @@
       "selectFile": "Select Excel file",
       "importing": "Importing...",
       "success": "Successfully imported {count} lots",
-      "error": "Error importing file"
+      "error": "Error importing file",
+      "unmatchedWarning": "{count} coffee(s) not found in catalog",
+      "unmatchedHint": "Click the pencil icon to edit or select a matching coffee from the catalog.",
+      "unmatchedImportNote": "Unmatched items will be imported as-is",
+      "notFound": "Not in catalog",
+      "editRow": "Edit Coffee",
+      "suggestions": "Select from catalog:"
     }
   },
   "roasts": {

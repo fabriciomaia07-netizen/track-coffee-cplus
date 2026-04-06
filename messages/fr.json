@@ -98,7 +98,13 @@
       "selectFile": "Sélectionner le fichier Excel",
       "importing": "Importation...",
       "success": "{count} lots importés avec succès",
-      "error": "Erreur lors de l'importation"
+      "error": "Erreur lors de l'importation",
+      "unmatchedWarning": "{count} café(s) non trouvé(s) dans le catalogue",
+      "unmatchedHint": "Cliquez sur l'icône crayon pour modifier ou sélectionner un café du catalogue.",
+      "unmatchedImportNote": "Les éléments non reconnus seront importés tels quels",
+      "notFound": "Pas dans le catalogue",
+      "editRow": "Modifier le Café",
+      "suggestions": "Sélectionner du catalogue :"
     }
   },
   "roasts": {

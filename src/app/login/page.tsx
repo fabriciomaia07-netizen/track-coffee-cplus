@@ -14,7 +14,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Coffee } from "lucide-react";
-import Link from "next/link";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
 
 export default function LoginPage() {
@@ -78,10 +77,7 @@ export default function LoginPage() {
             </Button>
           </form>
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            {t("auth.noAccount")}{" "}
-            <Link href="/register" className="text-primary underline">
-              {t("auth.register")}
-            </Link>
+            {t("auth.contactAdmin")}
           </p>
         </CardContent>
       </Card>

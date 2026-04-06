@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 async function checkAdmin() {
@@ -36,6 +36,71 @@ export async function updateUserRole(userId: string, role: string) {
     .from("profiles") as any)
     .update({ role })
     .eq("id", userId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard/admin");
+  return { success: true };
+}
+
+export async function createUser(data: {
+  email: string;
+  password: string;
+  fullName: string;
+  role: string;
+  storeId: string;
+}) {
+  const { error: authError } = await checkAdmin();
+  if (authError) return { error: authError };
+
+  if (!["admin", "torrador", "barista"].includes(data.role)) {
+    return { error: "Invalid role" };
+  }
+
+  const adminClient = createAdminClient();
+
+  const { data: newUser, error: createError } =
+    await adminClient.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: {
+        full_name: data.fullName,
+      },
+    });
+
+  if (createError) return { error: createError.message };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error: profileError } = await (adminClient
+    .from("profiles") as any)
+    .update({
+      full_name: data.fullName,
+      role: data.role,
+      store_id: data.storeId,
+    })
+    .eq("id", newUser.user.id);
+
+  if (profileError) return { error: profileError.message };
+
+  revalidatePath("/dashboard/admin");
+  return { success: true };
+}
+
+export async function deleteUser(userId: string) {
+  const { supabase, error: authError } = await checkAdmin();
+  if (authError) return { error: authError };
+
+  // Prevent self-deletion
+  const {
+    data: { user: currentUser },
+  } = await supabase.auth.getUser();
+  if (currentUser?.id === userId) {
+    return { error: "Cannot delete yourself" };
+  }
+
+  const adminClient = createAdminClient();
+  const { error } = await adminClient.auth.admin.deleteUser(userId);
 
   if (error) return { error: error.message };
 

@@ -43,7 +43,8 @@
     "noAccount": "Don't have an account?",
     "hasAccount": "Already have an account?",
     "loginError": "Invalid email or password",
-    "registerError": "Could not create account"
+    "registerError": "Could not create account",
+    "contactAdmin": "Need an account? Contact your administrator."
   },
   "roles": {
     "admin": "Admin",
@@ -251,6 +252,11 @@
     "users": "User Management",
     "userList": "Users",
     "changeRole": "Change Role",
-    "changeStore": "Change Store"
+    "changeStore": "Change Store",
+    "createUser": "Create User",
+    "createUserDesc": "Create a new barista or admin account",
+    "userCreated": "User created successfully",
+    "deleteUser": "Delete User",
+    "confirmDelete": "Are you sure you want to delete this user?"
   }
 }

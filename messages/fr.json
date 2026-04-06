@@ -43,7 +43,8 @@
     "noAccount": "Pas encore de compte ?",
     "hasAccount": "Déjà un compte ?",
     "loginError": "E-mail ou mot de passe invalide",
-    "registerError": "Impossible de créer le compte"
+    "registerError": "Impossible de créer le compte",
+    "contactAdmin": "Besoin d'un compte ? Contactez votre administrateur."
   },
   "roles": {
     "admin": "Admin",
@@ -251,6 +252,11 @@
     "users": "Gestion des Utilisateurs",
     "userList": "Utilisateurs",
     "changeRole": "Changer le Rôle",
-    "changeStore": "Changer le Magasin"
+    "changeStore": "Changer le Magasin",
+    "createUser": "Créer un Utilisateur",
+    "createUserDesc": "Créer un nouveau compte barista ou admin",
+    "userCreated": "Utilisateur créé avec succès",
+    "deleteUser": "Supprimer l'Utilisateur",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
   }
 }

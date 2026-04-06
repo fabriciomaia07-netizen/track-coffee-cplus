@@ -155,23 +155,73 @@ function parseDate(value: unknown): string {
 
 /* ── fuzzy matching ── */
 
-/** Extract Swiss city name from a catalog name like "6300 Zug" or "9001 St. Gallen" */
-function extractCity(name: string): string {
-  // Remove leading postal code (4-digit number)
-  return name.replace(/^\d{4}\s+/, "").split(".")[0].trim().toLowerCase();
+/** Normalize text: remove accents, dots, extra spaces, lowercase */
+function norm(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "") // strip accents
+    .replace(/\./g, " ")            // dots → spaces
+    .replace(/\s+/g, " ")           // collapse spaces
+    .trim()
+    .toLowerCase();
 }
 
-/** Extract city from an Excel name like "Gesha Washed (Finca el Paraiso - Zug)" */
-function extractCityFromExcel(name: string): string | null {
-  // Pattern: "... - CityName)" or "... (CityName)"
-  const dashMatch = name.match(/[-–]\s*([A-Za-zÀ-ÿ.\s]+?)\s*\)?$/);
-  if (dashMatch) return dashMatch[1].trim().toLowerCase();
+/** Known non-city words that appear in parentheses but are NOT Swiss cities */
+const NON_CITY = [
+  "finca", "paraiso", "paraíso", "abu", "coffee", "forest", "esperanza",
+  "espereanza", "campo", "hermoso", "sirena", "roast", "rebels", "label",
+  "sea", "island", "robusta",
+];
 
-  // Pattern: "(CityName)" at end
+function isLikelyCity(text: string): boolean {
+  const lower = text.toLowerCase();
+  return !NON_CITY.some((w) => lower.includes(w));
+}
+
+/** Extract Swiss city from catalog name: "6300 Zug" → "zug", "9001 St. Gallen" → "st gallen" */
+function extractCity(catalogName: string): string {
+  // Remove postal code prefix, then normalize (dots→spaces, accents, lowercase)
+  return norm(catalogName.replace(/^\d{4}\s+/, ""));
+}
+
+/** Extract city from Excel name like "Gesha (Finca el Paraiso - Zug)" → "zug" */
+function extractCityFromExcel(name: string): string | null {
+  // Try "... - CityName)" pattern first (most common in C+ sheets)
+  const dashMatch = name.match(/[-–]\s*([A-Za-zÀ-ÿ.\s]+?)\s*\)?$/);
+  if (dashMatch) {
+    const candidate = dashMatch[1].trim();
+    if (isLikelyCity(candidate)) return norm(candidate);
+  }
+
+  // Try "(CityName)" at end — only if it looks like a city
   const parenMatch = name.match(/\(([A-Za-zÀ-ÿ.\s]+?)\)\s*$/);
-  if (parenMatch) return parenMatch[1].trim().toLowerCase();
+  if (parenMatch) {
+    const candidate = parenMatch[1].trim();
+    if (isLikelyCity(candidate)) return norm(candidate);
+  }
+
+  // Try bare "Name - City" without parens
+  const bareMatch = name.match(/[-–]\s*([A-Za-zÀ-ÿ.\s]+?)$/);
+  if (bareMatch) {
+    const candidate = bareMatch[1].trim();
+    if (isLikelyCity(candidate)) return norm(candidate);
+  }
 
   return null;
+}
+
+/**
+ * Blend ingredient keywords — coffees containing these that have NO city
+ * are likely raw ingredients for house blends (Interlaken / Montreux)
+ */
+const BLEND_KEYWORDS = [
+  "santos", "tarrazu", "parchement", "robusta", "bio natural",
+  "bio and fair", "delicia",
+];
+
+function isBlendIngredient(name: string): boolean {
+  const lower = name.toLowerCase();
+  return BLEND_KEYWORDS.some((kw) => lower.includes(kw));
 }
 
 function findMatch(
@@ -181,49 +231,39 @@ function findMatch(
   const lower = name.toLowerCase().trim();
   if (!lower) return undefined;
 
-  // 1. Exact match
-  const exact = existingCoffees.find((c) => c.name.toLowerCase() === lower);
-  if (exact) return exact;
-
-  // 2. City-based matching (most reliable for C+ coffees)
+  // 1. City-based matching (primary strategy for C+ coffees)
   const excelCity = extractCityFromExcel(name);
   if (excelCity) {
+    // Prefer exact city match first
     for (const coffee of existingCoffees) {
       const catalogCity = extractCity(coffee.name);
-      if (
-        catalogCity === excelCity ||
-        catalogCity.includes(excelCity) ||
-        excelCity.includes(catalogCity)
-      ) {
-        return coffee;
+      if (catalogCity === excelCity) return coffee;
+    }
+    // Then try containment (only for longer city names to avoid "st" collisions)
+    if (excelCity.length > 3) {
+      for (const coffee of existingCoffees) {
+        const catalogCity = extractCity(coffee.name);
+        if (!catalogCity || catalogCity.length < 4) continue;
+        if (catalogCity.includes(excelCity) || excelCity.includes(catalogCity))
+          return coffee;
       }
     }
   }
 
-  // 3. Check if any catalog city name appears in the imported name
+  // 2. Check if any catalog city appears anywhere in the imported name
+  //    Only match if the city name is long enough to be unambiguous
+  const normalizedName = norm(name);
   for (const coffee of existingCoffees) {
     const city = extractCity(coffee.name);
-    if (city.length > 2 && lower.includes(city)) return coffee;
+    if (city.length > 3 && normalizedName.includes(city)) return coffee;
   }
 
-  // 4. Substring match
-  for (const coffee of existingCoffees) {
-    const cLower = coffee.name.toLowerCase();
-    if (lower.includes(cLower) || cLower.includes(lower)) return coffee;
-  }
+  // 3. Skip further matching for blend ingredients — they don't map to a city
+  if (isBlendIngredient(name)) return undefined;
 
-  // 5. Word overlap
-  const words = lower.split(/\s+/);
-  for (const coffee of existingCoffees) {
-    const cWords = coffee.name.toLowerCase().split(/\s+/);
-    const overlap = words.filter((w) =>
-      cWords.some((cw) => cw.includes(w) || w.includes(cw))
-    );
-    if (
-      overlap.length >= Math.ceil(Math.min(words.length, cWords.length) / 2)
-    )
-      return coffee;
-  }
+  // 4. Exact match on full catalog name
+  const exact = existingCoffees.find((c) => norm(c.name) === normalizedName);
+  if (exact) return exact;
 
   return undefined;
 }

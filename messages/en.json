@@ -104,7 +104,10 @@
       "unmatchedImportNote": "Unmatched items will be imported as-is",
       "notFound": "Not in catalog",
       "editRow": "Edit Coffee",
-      "suggestions": "Select from catalog:"
+      "suggestions": "Select from catalog:",
+      "controlDate": "Stock Check Date",
+      "controlDateHint": "Date when stock was last counted",
+      "purchaseDateHint": "Optional — fill in later if unknown"
     }
   },
   "roasts": {

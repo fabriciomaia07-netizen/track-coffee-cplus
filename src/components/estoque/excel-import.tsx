@@ -27,13 +27,15 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
   Loader2,
-  Upload,
   Check,
   AlertTriangle,
   Pencil,
   CheckCircle2,
+  Trash2,
 } from "lucide-react";
 import { PROCESS_METHODS } from "@/lib/constants";
+
+/* ── types ── */
 
 interface ParsedLot {
   origin_country: string;
@@ -58,11 +60,14 @@ interface ExistingCoffee {
 interface ImportRow extends ParsedLot {
   _status: "matched" | "unmatched";
   _matchedName?: string;
+  _controlDate?: string;
 }
 
 interface ExcelImportProps {
   existingCoffees: ExistingCoffee[];
 }
+
+/* ── column map (tabular fallback) ── */
 
 const COLUMN_MAP: Record<string, keyof ParsedLot> = {
   origin: "origin_country",
@@ -114,8 +119,7 @@ const COLUMN_MAP: Record<string, keyof ParsedLot> = {
 };
 
 function normalizeHeader(header: string): keyof ParsedLot | undefined {
-  const lower = header.toLowerCase().trim();
-  return COLUMN_MAP[lower];
+  return COLUMN_MAP[header.toLowerCase().trim()];
 }
 
 function parseDate(value: unknown): string {
@@ -124,19 +128,33 @@ function parseDate(value: unknown): string {
   }
   if (typeof value === "number") {
     const date = XLSX.SSF.parse_date_code(value);
+    if (date.y < 2000) return new Date().toISOString().split("T")[0];
     return `${date.y}-${String(date.m).padStart(2, "0")}-${String(date.d).padStart(2, "0")}`;
   }
   if (typeof value === "string" && value.trim()) {
+    // Handle m/d/yy and dd/mm/yyyy
+    const parts = value.trim().split(/[/\-\.]/);
+    if (parts.length === 3) {
+      let [a, b, c] = parts.map(Number);
+      if (c < 100) c += 2000;
+      if (c < 2000) return new Date().toISOString().split("T")[0];
+      // US format: m/d/yy
+      if (a <= 12) {
+        return `${c}-${String(a).padStart(2, "0")}-${String(b).padStart(2, "0")}`;
+      }
+      // EU format: dd/mm/yyyy
+      return `${c}-${String(b).padStart(2, "0")}-${String(a).padStart(2, "0")}`;
+    }
     const parsed = new Date(value);
     if (!isNaN(parsed.getTime())) {
       return parsed.toISOString().split("T")[0];
     }
-    return value.trim();
   }
   return new Date().toISOString().split("T")[0];
 }
 
-/** Fuzzy match: checks if the name contains parts of any existing coffee name */
+/* ── fuzzy matching ── */
+
 function findMatch(
   name: string,
   existingCoffees: ExistingCoffee[]
@@ -144,34 +162,149 @@ function findMatch(
   const lower = name.toLowerCase().trim();
   if (!lower) return undefined;
 
-  // Exact match first
-  const exact = existingCoffees.find(
-    (c) => c.name.toLowerCase() === lower
-  );
+  // Exact
+  const exact = existingCoffees.find((c) => c.name.toLowerCase() === lower);
   if (exact) return exact;
 
-  // Check if existing name is contained in imported name or vice versa
+  // Substring
   for (const coffee of existingCoffees) {
     const cLower = coffee.name.toLowerCase();
-    if (lower.includes(cLower) || cLower.includes(lower)) {
-      return coffee;
-    }
+    if (lower.includes(cLower) || cLower.includes(lower)) return coffee;
   }
 
-  // Word overlap: if >50% of words match
+  // Word overlap
   const words = lower.split(/\s+/);
   for (const coffee of existingCoffees) {
     const cWords = coffee.name.toLowerCase().split(/\s+/);
     const overlap = words.filter((w) =>
       cWords.some((cw) => cw.includes(w) || w.includes(cw))
     );
-    if (overlap.length >= Math.ceil(Math.min(words.length, cWords.length) / 2)) {
+    if (
+      overlap.length >= Math.ceil(Math.min(words.length, cWords.length) / 2)
+    )
       return coffee;
-    }
   }
 
   return undefined;
 }
+
+/* ── block format parser (C+ inventory sheets) ── */
+
+function isBlockFormat(rows: unknown[][]): boolean {
+  const text = rows
+    .flat()
+    .filter(Boolean)
+    .map((v) => String(v).toLowerCase())
+    .join(" ");
+  return (
+    text.includes("green beans remaining") ||
+    text.includes("roasting date") ||
+    text.includes("quantity roasted")
+  );
+}
+
+interface BlockCoffee {
+  name: string;
+  remainingGrams: number;
+  controlDate: string;
+}
+
+function parseBlocks(rows: unknown[][]): BlockCoffee[] {
+  const coffees: BlockCoffee[] = [];
+  let i = 0;
+
+  while (i < rows.length) {
+    const row = rows[i] ?? [];
+    // Coffee name row: column B has a string, not a header keyword
+    const colB = row[1] != null ? String(row[1]).trim() : "";
+    const colBLower = colB.toLowerCase();
+
+    if (
+      colB &&
+      !colBLower.includes("roasting date") &&
+      !colBLower.includes("quantity roasted") &&
+      !colBLower.includes("green beans remaining") &&
+      colB.length > 3
+    ) {
+      // Potential coffee name — look ahead for "Green Beans Remaining"
+      let remainingGrams = 0;
+      let controlDate = "";
+      let found = false;
+
+      for (let j = i + 1; j < Math.min(i + 10, rows.length); j++) {
+        const checkRow = rows[j] ?? [];
+        const checkB = checkRow[1] != null ? String(checkRow[1]).trim() : "";
+        if (checkB.toLowerCase().includes("green beans remaining")) {
+          // Next row should have [date, grams]
+          const dataRow = rows[j + 1] ?? [];
+          if (dataRow.length > 0) {
+            // Some sheets have date in col A, grams in col B
+            // Others have them shifted
+            const val0 = dataRow[0];
+            const val1 = dataRow[1];
+
+            if (val1 != null && !isNaN(Number(val1))) {
+              remainingGrams = Number(val1);
+              controlDate = val0 != null ? parseDate(val0) : "";
+            } else if (val0 != null && !isNaN(Number(val0))) {
+              remainingGrams = Number(val0);
+            }
+          }
+          found = true;
+          break;
+        }
+      }
+
+      if (found) {
+        coffees.push({
+          name: colB,
+          remainingGrams,
+          controlDate,
+        });
+      }
+    }
+
+    i++;
+  }
+
+  return coffees;
+}
+
+/* ── tabular parser ── */
+
+function parseTabular(
+  jsonData: Record<string, unknown>[]
+): ParsedLot[] {
+  const lots: ParsedLot[] = [];
+  for (const row of jsonData) {
+    const mapped: Partial<ParsedLot> = {};
+    for (const [key, value] of Object.entries(row)) {
+      const field = normalizeHeader(key);
+      if (!field) continue;
+      if (field === "purchase_date") mapped[field] = parseDate(value);
+      else if (field === "quantity_kg" || field === "price_per_kg")
+        mapped[field] = Number(value) || 0;
+      else mapped[field] = String(value ?? "");
+    }
+    if (mapped.origin_country && mapped.variety && mapped.process_method) {
+      lots.push({
+        origin_country: mapped.origin_country,
+        variety: mapped.variety,
+        process_method: mapped.process_method,
+        quantity_kg: mapped.quantity_kg ?? 0,
+        purchase_date:
+          mapped.purchase_date ?? new Date().toISOString().split("T")[0],
+        supplier: mapped.supplier,
+        farm_producer: mapped.farm_producer,
+        price_per_kg: mapped.price_per_kg,
+        notes: mapped.notes,
+      });
+    }
+  }
+  return lots;
+}
+
+/* ── component ── */
 
 export function ExcelImport({ existingCoffees }: ExcelImportProps) {
   const t = useTranslations("inventory");
@@ -183,7 +316,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
   const [rows, setRows] = useState<ImportRow[]>([]);
   const [importing, setImporting] = useState(false);
   const [editingIdx, setEditingIdx] = useState<number | null>(null);
-  const [editForm, setEditForm] = useState<ParsedLot | null>(null);
+  const [editForm, setEditForm] = useState<ImportRow | null>(null);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -192,65 +325,72 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(buffer, { type: "array", cellDates: true });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+    const rawRows = XLSX.utils.sheet_to_json<unknown[]>(sheet, {
+      header: 1,
+      raw: true,
+    });
 
-    const importRows: ImportRow[] = [];
+    let importRows: ImportRow[] = [];
 
-    for (const row of jsonData) {
-      const mapped: Partial<ParsedLot> = {};
+    if (isBlockFormat(rawRows as unknown[][])) {
+      // ── C+ inventory block format ──
+      const blocks = parseBlocks(rawRows as unknown[][]);
+      const today = new Date().toISOString().split("T")[0];
 
-      for (const [key, value] of Object.entries(row)) {
-        const field = normalizeHeader(key);
-        if (!field) continue;
+      for (const block of blocks) {
+        const match = findMatch(block.name, existingCoffees);
+        const quantityKg = Math.round((block.remainingGrams / 1000) * 100) / 100;
 
-        if (field === "purchase_date") {
-          mapped[field] = parseDate(value);
-        } else if (field === "quantity_kg" || field === "price_per_kg") {
-          mapped[field] = Number(value) || 0;
+        if (match) {
+          importRows.push({
+            origin_country: match.origin_country,
+            variety: match.variety,
+            process_method: match.process_method,
+            quantity_kg: quantityKg,
+            purchase_date: "",
+            notes: block.name,
+            _status: "matched",
+            _matchedName: match.name,
+            _controlDate: block.controlDate || today,
+          });
         } else {
-          mapped[field] = String(value ?? "");
+          importRows.push({
+            origin_country: "",
+            variety: "",
+            process_method: "other",
+            quantity_kg: quantityKg,
+            purchase_date: "",
+            notes: block.name,
+            _status: "unmatched",
+            _controlDate: block.controlDate || today,
+          });
         }
       }
+    } else {
+      // ── tabular format ──
+      const jsonData = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+      const tabularLots = parseTabular(jsonData);
 
-      // Build the coffee name from notes or origin
-      const coffeeName =
-        mapped.notes?.split(".")[0]?.trim() ||
-        mapped.origin_country ||
-        "";
+      for (const lot of tabularLots) {
+        const coffeeName =
+          lot.notes?.split(".")[0]?.trim() || lot.origin_country;
+        const match = findMatch(coffeeName, existingCoffees);
 
-      // Try to match against existing coffees
-      const match = findMatch(coffeeName, existingCoffees);
-
-      if (match) {
-        // Auto-fill from existing coffee data
-        importRows.push({
-          origin_country: match.origin_country,
-          variety: match.variety,
-          process_method: match.process_method,
-          quantity_kg: mapped.quantity_kg ?? 0,
-          purchase_date:
-            mapped.purchase_date ?? new Date().toISOString().split("T")[0],
-          supplier: mapped.supplier,
-          farm_producer: mapped.farm_producer,
-          price_per_kg: mapped.price_per_kg,
-          notes: mapped.notes,
-          _status: "matched",
-          _matchedName: match.name,
-        });
-      } else {
-        importRows.push({
-          origin_country: mapped.origin_country ?? "",
-          variety: mapped.variety ?? "",
-          process_method: mapped.process_method ?? "other",
-          quantity_kg: mapped.quantity_kg ?? 0,
-          purchase_date:
-            mapped.purchase_date ?? new Date().toISOString().split("T")[0],
-          supplier: mapped.supplier,
-          farm_producer: mapped.farm_producer,
-          price_per_kg: mapped.price_per_kg,
-          notes: mapped.notes,
-          _status: "unmatched",
-        });
+        if (match) {
+          importRows.push({
+            ...lot,
+            origin_country: match.origin_country,
+            variety: match.variety,
+            process_method: match.process_method,
+            _status: "matched",
+            _matchedName: match.name,
+          });
+        } else {
+          importRows.push({
+            ...lot,
+            _status: "unmatched",
+          });
+        }
       }
     }
 
@@ -258,30 +398,19 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
   }
 
   function openEdit(idx: number) {
-    const row = rows[idx];
-    setEditForm({
-      origin_country: row.origin_country,
-      variety: row.variety,
-      process_method: row.process_method,
-      quantity_kg: row.quantity_kg,
-      purchase_date: row.purchase_date,
-      supplier: row.supplier,
-      farm_producer: row.farm_producer,
-      price_per_kg: row.price_per_kg,
-      notes: row.notes,
-    });
+    setEditForm({ ...rows[idx] });
     setEditingIdx(idx);
   }
 
   function saveEdit() {
     if (editingIdx === null || !editForm) return;
-
     setRows((prev) => {
       const updated = [...prev];
       updated[editingIdx] = {
         ...editForm,
         _status: "matched",
-        _matchedName: editForm.notes?.split(".")[0]?.trim() || editForm.origin_country,
+        _matchedName:
+          editForm.notes?.split(".")[0]?.trim() || editForm.origin_country,
       };
       return updated;
     });
@@ -297,7 +426,12 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
     if (rows.length === 0) return;
 
     const lotsToImport = rows.map(
-      ({ _status, _matchedName, ...lot }) => lot
+      ({ _status, _matchedName, _controlDate, ...lot }) => ({
+        ...lot,
+        // Use control date as purchase date if no purchase date provided
+        purchase_date:
+          lot.purchase_date || _controlDate || new Date().toISOString().split("T")[0],
+      })
     );
 
     setImporting(true);
@@ -314,13 +448,11 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
   }
 
   const unmatchedCount = rows.filter((r) => r._status === "unmatched").length;
-  const hasUnmatched = unmatchedCount > 0;
+  const totalKg = rows.reduce((sum, r) => sum + r.quantity_kg, 0);
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <p className="text-sm text-muted-foreground">{te("description")}</p>
-      </div>
+      <p className="text-sm text-muted-foreground">{te("description")}</p>
 
       <div className="space-y-2">
         <Label>{te("selectFile")}</Label>
@@ -335,18 +467,32 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
 
       {rows.length > 0 && (
         <>
-          {/* Warning banner for unmatched rows */}
-          {hasUnmatched && (
+          {/* Summary */}
+          <div className="flex flex-wrap gap-3">
+            <Badge variant="secondary" className="text-sm">
+              {rows.length} {t("lots")}
+            </Badge>
+            <Badge variant="secondary" className="text-sm">
+              {totalKg.toFixed(1)} {tc("kg")} total
+            </Badge>
+            {unmatchedCount > 0 && (
+              <Badge
+                variant="outline"
+                className="border-amber-300 text-sm text-amber-700"
+              >
+                <AlertTriangle className="mr-1 size-3" />
+                {te("unmatchedWarning", { count: unmatchedCount })}
+              </Badge>
+            )}
+          </div>
+
+          {/* Warning */}
+          {unmatchedCount > 0 && (
             <div className="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm dark:border-amber-800 dark:bg-amber-950">
               <AlertTriangle className="size-5 shrink-0 text-amber-600" />
-              <div>
-                <p className="font-medium text-amber-800 dark:text-amber-200">
-                  {te("unmatchedWarning", { count: unmatchedCount })}
-                </p>
-                <p className="text-amber-700 dark:text-amber-300">
-                  {te("unmatchedHint")}
-                </p>
-              </div>
+              <p className="text-amber-700 dark:text-amber-300">
+                {te("unmatchedHint")}
+              </p>
             </div>
           )}
 
@@ -357,15 +503,15 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                 <TableHead>{t("coffeeName")}</TableHead>
                 <TableHead>{t("origin")}</TableHead>
                 <TableHead>{t("variety")}</TableHead>
-                <TableHead>{t("process")}</TableHead>
                 <TableHead>{t("quantity")}</TableHead>
+                <TableHead>{te("controlDate")}</TableHead>
                 <TableHead className="w-20" />
               </TableRow>
             </TableHeader>
             <TableBody>
               {rows.map((row, idx) => {
                 const name =
-                  row.notes?.split(".")[0]?.trim() || row.origin_country;
+                  row.notes?.split(".")[0]?.trim() || row.origin_country || "—";
                 return (
                   <TableRow
                     key={idx}
@@ -383,39 +529,32 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                       )}
                     </TableCell>
                     <TableCell>
-                      <div>
+                      <div className="flex flex-wrap items-center gap-1.5">
                         <span className="font-medium">{name}</span>
                         {row._status === "matched" && row._matchedName && (
-                          <Badge
-                            variant="secondary"
-                            className="ml-2 text-xs"
-                          >
+                          <Badge variant="secondary" className="text-xs">
                             {row._matchedName}
                           </Badge>
                         )}
                         {row._status === "unmatched" && (
                           <Badge
                             variant="outline"
-                            className="ml-2 border-amber-300 text-xs text-amber-700"
+                            className="border-amber-300 text-xs text-amber-700"
                           >
                             {te("notFound")}
                           </Badge>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>{row.origin_country || "—"}</TableCell>
-                    <TableCell>{row.variety || "—"}</TableCell>
-                    <TableCell>
-                      {row.process_method
-                        ? t(
-                            `processes.${row.process_method}` as Parameters<
-                              typeof t
-                            >[0]
-                          )
-                        : "—"}
+                    <TableCell className="text-muted-foreground">
+                      {row.origin_country || "—"}
                     </TableCell>
-                    <TableCell>
+                    <TableCell>{row.variety || "—"}</TableCell>
+                    <TableCell className="font-medium">
                       {row.quantity_kg} {tc("kg")}
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {row._controlDate || "—"}
                     </TableCell>
                     <TableCell>
                       <div className="flex gap-1">
@@ -435,7 +574,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                           onClick={() => removeRow(idx)}
                           title={tc("delete")}
                         >
-                          ×
+                          <Trash2 className="size-3" />
                         </Button>
                       </div>
                     </TableCell>
@@ -459,7 +598,7 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                 </>
               )}
             </Button>
-            {hasUnmatched && (
+            {unmatchedCount > 0 && (
               <p className="text-xs text-amber-600">
                 {te("unmatchedImportNote")}
               </p>
@@ -485,13 +624,13 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
 
           {editForm && (
             <div className="space-y-4">
-              {/* Suggestion badges from existing coffees */}
+              {/* Catalog suggestions */}
               {existingCoffees.length > 0 && (
                 <div className="space-y-2">
                   <Label className="text-xs text-muted-foreground">
                     {te("suggestions")}
                   </Label>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-1.5 max-h-24 overflow-auto">
                     {existingCoffees.map((coffee) => (
                       <button
                         key={coffee.id}
@@ -504,7 +643,6 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                                   origin_country: coffee.origin_country,
                                   variety: coffee.variety,
                                   process_method: coffee.process_method,
-                                  notes: coffee.name,
                                 }
                               : prev
                           )
@@ -613,6 +751,50 @@ export function ExcelImport({ existingCoffees }: ExcelImportProps) {
                       )
                     }
                   />
+                </div>
+              </div>
+
+              {/* Dates section */}
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-control-date">
+                    {te("controlDate")}
+                  </Label>
+                  <Input
+                    id="edit-control-date"
+                    type="date"
+                    value={editForm._controlDate ?? ""}
+                    onChange={(e) =>
+                      setEditForm((prev) =>
+                        prev
+                          ? { ...prev, _controlDate: e.target.value }
+                          : prev
+                      )
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {te("controlDateHint")}
+                  </p>
+                </div>
+                <div className="space-y-1.5">
+                  <Label htmlFor="edit-purchase-date">
+                    {t("purchaseDate")}
+                  </Label>
+                  <Input
+                    id="edit-purchase-date"
+                    type="date"
+                    value={editForm.purchase_date ?? ""}
+                    onChange={(e) =>
+                      setEditForm((prev) =>
+                        prev
+                          ? { ...prev, purchase_date: e.target.value }
+                          : prev
+                      )
+                    }
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    {te("purchaseDateHint")}
+                  </p>
                 </div>
               </div>
             </div>

@@ -104,7 +104,10 @@
       "unmatchedImportNote": "Les éléments non reconnus seront importés tels quels",
       "notFound": "Pas dans le catalogue",
       "editRow": "Modifier le Café",
-      "suggestions": "Sélectionner du catalogue :"
+      "suggestions": "Sélectionner du catalogue :",
+      "controlDate": "Date du Contrôle",
+      "controlDateHint": "Date du dernier comptage du stock",
+      "purchaseDateHint": "Optionnel — remplir plus tard si inconnu"
     }
   },
   "roasts": {

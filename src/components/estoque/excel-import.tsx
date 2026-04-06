@@ -155,6 +155,25 @@ function parseDate(value: unknown): string {
 
 /* ── fuzzy matching ── */
 
+/** Extract Swiss city name from a catalog name like "6300 Zug" or "9001 St. Gallen" */
+function extractCity(name: string): string {
+  // Remove leading postal code (4-digit number)
+  return name.replace(/^\d{4}\s+/, "").split(".")[0].trim().toLowerCase();
+}
+
+/** Extract city from an Excel name like "Gesha Washed (Finca el Paraiso - Zug)" */
+function extractCityFromExcel(name: string): string | null {
+  // Pattern: "... - CityName)" or "... (CityName)"
+  const dashMatch = name.match(/[-–]\s*([A-Za-zÀ-ÿ.\s]+?)\s*\)?$/);
+  if (dashMatch) return dashMatch[1].trim().toLowerCase();
+
+  // Pattern: "(CityName)" at end
+  const parenMatch = name.match(/\(([A-Za-zÀ-ÿ.\s]+?)\)\s*$/);
+  if (parenMatch) return parenMatch[1].trim().toLowerCase();
+
+  return null;
+}
+
 function findMatch(
   name: string,
   existingCoffees: ExistingCoffee[]
@@ -162,17 +181,38 @@ function findMatch(
   const lower = name.toLowerCase().trim();
   if (!lower) return undefined;
 
-  // Exact
+  // 1. Exact match
   const exact = existingCoffees.find((c) => c.name.toLowerCase() === lower);
   if (exact) return exact;
 
-  // Substring
+  // 2. City-based matching (most reliable for C+ coffees)
+  const excelCity = extractCityFromExcel(name);
+  if (excelCity) {
+    for (const coffee of existingCoffees) {
+      const catalogCity = extractCity(coffee.name);
+      if (
+        catalogCity === excelCity ||
+        catalogCity.includes(excelCity) ||
+        excelCity.includes(catalogCity)
+      ) {
+        return coffee;
+      }
+    }
+  }
+
+  // 3. Check if any catalog city name appears in the imported name
+  for (const coffee of existingCoffees) {
+    const city = extractCity(coffee.name);
+    if (city.length > 2 && lower.includes(city)) return coffee;
+  }
+
+  // 4. Substring match
   for (const coffee of existingCoffees) {
     const cLower = coffee.name.toLowerCase();
     if (lower.includes(cLower) || cLower.includes(lower)) return coffee;
   }
 
-  // Word overlap
+  // 5. Word overlap
   const words = lower.split(/\s+/);
   for (const coffee of existingCoffees) {
     const cWords = coffee.name.toLowerCase().split(/\s+/);

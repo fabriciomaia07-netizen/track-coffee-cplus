@@ -16,19 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Plus, ChevronDown } from "lucide-react";
-
-const METHODS = [
-  "espresso",
-  "v60",
-  "french_press",
-  "aeropress",
-  "chemex",
-  "cold_brew",
-  "moka_pot",
-  "weber_bird",
-  "other",
-] as const;
+import { Plus } from "lucide-react";
+import { BREW_METHODS } from "@/lib/constants";
 
 export function CoffeeRecipeForm({ lotId }: { lotId: string }) {
   const t = useTranslations();
@@ -76,7 +65,7 @@ export function CoffeeRecipeForm({ lotId }: { lotId: string }) {
               <SelectValue placeholder={t("recipes.method")} />
             </SelectTrigger>
             <SelectContent>
-              {METHODS.map((method) => (
+              {BREW_METHODS.map((method) => (
                 <SelectItem key={method} value={method}>
                   {t(`recipes.methods.${method}`)}
                 </SelectItem>

@@ -51,52 +51,17 @@ export async function createRecipe(formData: FormData) {
 }
 
 export async function createRecipeForCoffee(formData: FormData) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return { error: "Not authenticated" };
+  // Force shared when creating from coffee detail page
+  formData.set("is_shared", "true");
+  const lotId = formData.get("green_coffee_lot_id") as string;
 
-  const raw = Object.fromEntries(formData);
-  const parsed = recipeSchema.safeParse({
-    ...raw,
-    is_shared: raw.is_shared === "true",
-  });
-  if (!parsed.success) {
-    return { error: "Invalid input", details: parsed.error.flatten() };
-  }
+  const result = await createRecipe(formData);
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("store_id")
-    .eq("id", user.id)
-    .single() as { data: { store_id: string } | null };
-
-  if (!profile) return { error: "Profile not found" };
-
-  const { error } = await supabase.from("recipes").insert({
-    store_id: profile.store_id,
-    title: parsed.data.title,
-    method: parsed.data.method,
-    green_coffee_lot_id: parsed.data.green_coffee_lot_id ?? null,
-    dose_grams: parsed.data.dose_grams ?? null,
-    water_ml: parsed.data.water_ml ?? null,
-    temperature_celsius: parsed.data.temperature_celsius ?? null,
-    brew_time_seconds: parsed.data.brew_time_seconds ?? null,
-    grind_size: parsed.data.grind_size || null,
-    instructions: parsed.data.instructions || null,
-    is_shared: true,
-    created_by: user.id,
-  });
-
-  if (error) return { error: error.message };
-
-  const lotId = parsed.data.green_coffee_lot_id;
-  if (lotId) {
+  if (result.success && lotId) {
     revalidatePath(`/dashboard/catalogo/${lotId}`);
   }
-  revalidatePath("/dashboard/receitas");
-  return { success: true };
+
+  return result;
 }
 
 export async function updateRecipe(id: string, formData: FormData) {

@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Leaf, Droplets, Mountain } from "lucide-react";
+import { processColors } from "@/lib/constants";
 
 interface Lot {
   id: string;
@@ -16,14 +17,6 @@ interface Lot {
   notes: string | null;
   label_image_url: string | null;
 }
-
-const processColors: Record<string, string> = {
-  washed: "bg-blue-100 text-blue-800",
-  natural: "bg-orange-100 text-orange-800",
-  honey: "bg-amber-100 text-amber-800",
-  anaerobic: "bg-purple-100 text-purple-800",
-  other: "bg-gray-100 text-gray-800",
-};
 
 export function CatalogGrid({ lots }: { lots: Lot[] }) {
   const t = useTranslations("catalog");

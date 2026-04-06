@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { ArrowLeft, Trash2 } from "lucide-react";
 import { deleteRecipe } from "@/lib/actions/receitas";
-import { redirect } from "next/navigation";
 import { CommentSection } from "@/components/receitas/comment-section";
 
 interface RecipeDetailPageProps {

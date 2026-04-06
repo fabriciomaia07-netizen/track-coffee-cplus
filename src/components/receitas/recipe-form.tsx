@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { BREW_METHODS } from "@/lib/constants";
 
 interface RoastOption {
   id: string;
@@ -31,18 +32,6 @@ interface RoastOption {
 interface RecipeFormProps {
   roastSessions: RoastOption[];
 }
-
-const METHODS = [
-  "espresso",
-  "v60",
-  "french_press",
-  "aeropress",
-  "chemex",
-  "cold_brew",
-  "moka_pot",
-  "weber_bird",
-  "other",
-] as const;
 
 export function RecipeForm({ roastSessions }: RecipeFormProps) {
   const t = useTranslations();
@@ -82,7 +71,7 @@ export function RecipeForm({ roastSessions }: RecipeFormProps) {
                 <SelectValue placeholder={t("recipes.method")} />
               </SelectTrigger>
               <SelectContent>
-                {METHODS.map((method) => (
+                {BREW_METHODS.map((method) => (
                   <SelectItem key={method} value={method}>
                     {t(`recipes.methods.${method}`)}
                   </SelectItem>

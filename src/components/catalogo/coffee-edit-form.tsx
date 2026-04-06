@@ -10,8 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-
-const PROCESS_METHODS = ["washed", "natural", "honey", "anaerobic", "other"];
+import { PROCESS_METHODS } from "@/lib/constants";
 
 interface LotData {
   id: string;

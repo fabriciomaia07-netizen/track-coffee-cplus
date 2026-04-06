@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -11,21 +11,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowLeft, MapPin, Leaf, Droplets, Mountain, Plus } from "lucide-react";
+import { ArrowLeft, MapPin, Leaf, Droplets, Mountain } from "lucide-react";
 import { CoffeeEditForm } from "@/components/catalogo/coffee-edit-form";
 import { CoffeeRecipeForm } from "@/components/catalogo/coffee-recipe-form";
 import { CommentSection } from "@/components/receitas/comment-section";
 import { deleteRecipe } from "@/lib/actions/receitas";
-import { redirect } from "next/navigation";
+import { processColors } from "@/lib/constants";
 import type { Tables } from "@/types/database";
-
-const processColors: Record<string, string> = {
-  washed: "bg-blue-100 text-blue-800",
-  natural: "bg-orange-100 text-orange-800",
-  honey: "bg-amber-100 text-amber-800",
-  anaerobic: "bg-purple-100 text-purple-800",
-  other: "bg-gray-100 text-gray-800",
-};
 
 interface Recipe {
   id: string;

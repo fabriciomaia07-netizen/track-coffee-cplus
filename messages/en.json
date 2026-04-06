@@ -58,7 +58,8 @@
     "totalRoasts": "Total Roasts",
     "totalRecipes": "Recipes",
     "recentRoasts": "Recent Roasts",
-    "lowStock": "Low Stock Alerts"
+    "lowStock": "Low Stock Alerts",
+    "stockByStore": "Green Stock by Store"
   },
   "inventory": {
     "title": "Green Bean Inventory",
@@ -75,6 +76,10 @@
     "supplier": "Supplier",
     "pricePerKg": "Price per kg",
     "notes": "Notes",
+    "store": "Store",
+    "totalStock": "Total Stock",
+    "lots": "lots",
+    "showAll": "Show all",
     "labelImage": "Label Photo",
     "uploadLabel": "Upload label photo",
     "lotDetail": "Lot Details",

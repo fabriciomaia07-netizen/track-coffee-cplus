@@ -25,9 +25,15 @@ interface Lot {
   label_image_url: string | null;
   farm_producer: string | null;
   notes: string | null;
+  stores?: { name: string } | null;
 }
 
-export function LotTable({ lots }: { lots: Lot[] }) {
+interface LotTableProps {
+  lots: Lot[];
+  showStore?: boolean;
+}
+
+export function LotTable({ lots, showStore = false }: LotTableProps) {
   const t = useTranslations("inventory");
   const tc = useTranslations("common");
 
@@ -45,6 +51,7 @@ export function LotTable({ lots }: { lots: Lot[] }) {
         <TableRow>
           <TableHead className="w-12" />
           <TableHead>{t("coffeeName")}</TableHead>
+          {showStore && <TableHead>{t("store")}</TableHead>}
           <TableHead>{t("origin")}</TableHead>
           <TableHead>{t("variety")}</TableHead>
           <TableHead>{t("process")}</TableHead>
@@ -80,6 +87,13 @@ export function LotTable({ lots }: { lots: Lot[] }) {
                   </span>
                 </Link>
               </TableCell>
+              {showStore && (
+                <TableCell>
+                  <Badge variant="outline" className="text-xs">
+                    {lot.stores?.name ?? "—"}
+                  </Badge>
+                </TableCell>
+              )}
               <TableCell className="text-muted-foreground">
                 {lot.origin_country}
               </TableCell>

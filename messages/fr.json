@@ -58,7 +58,8 @@
     "totalRoasts": "Total Torréfactions",
     "totalRecipes": "Recettes",
     "recentRoasts": "Torréfactions Récentes",
-    "lowStock": "Alertes Stock Faible"
+    "lowStock": "Alertes Stock Faible",
+    "stockByStore": "Stock Vert par Magasin"
   },
   "inventory": {
     "title": "Inventaire Café Vert",
@@ -75,6 +76,10 @@
     "supplier": "Fournisseur",
     "pricePerKg": "Prix par kg",
     "notes": "Notes",
+    "store": "Magasin",
+    "totalStock": "Stock Total",
+    "lots": "lots",
+    "showAll": "Voir tout",
     "labelImage": "Photo de l'étiquette",
     "uploadLabel": "Télécharger la photo de l'étiquette",
     "lotDetail": "Détails du Lot",

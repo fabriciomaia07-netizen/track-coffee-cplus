@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { getTranslations } from "next-intl/server";
-import { LotTable } from "@/components/estoque/lot-table";
+import { StoreInventory } from "@/components/estoque/store-inventory";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Plus, FileSpreadsheet } from "lucide-react";
@@ -10,11 +10,18 @@ export default async function EstoquePage() {
   const t = await getTranslations("inventory");
   const supabase = await createClient();
 
-  const { data: lots } = await supabase
+  const { data: stores } = (await supabase
+    .from("stores")
+    .select("id, name")
+    .order("name")) as {
+    data: Array<{ id: string; name: string }> | null;
+  };
+
+  const { data: lots } = (await supabase
     .from("green_coffee_lots")
-    .select("*")
-    .order("created_at", { ascending: false }) as {
-    data: Tables<"green_coffee_lots">[] | null;
+    .select("*, stores:store_id(name)")
+    .order("created_at", { ascending: false })) as {
+    data: Array<Tables<"green_coffee_lots"> & { stores: { name: string } | null }> | null;
   };
 
   return (
@@ -37,7 +44,7 @@ export default async function EstoquePage() {
         </div>
       </div>
 
-      <LotTable lots={lots ?? []} />
+      <StoreInventory stores={stores ?? []} lots={lots ?? []} />
     </div>
   );
 }

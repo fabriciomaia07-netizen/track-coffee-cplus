@@ -39,11 +39,11 @@ export function FlavorProfileForm({ roastSessions }: FlavorProfileFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [values, setValues] = useState<Record<string, number>>({
-    acidity: 5,
-    body: 5,
-    sweetness: 5,
-    bitterness: 5,
-    aftertaste: 5,
+    acidity: 3,
+    body: 3,
+    sweetness: 3,
+    bitterness: 3,
+    aftertaste: 3,
   });
 
   function handleSliderChange(attr: string, value: number) {
@@ -101,7 +101,7 @@ export function FlavorProfileForm({ roastSessions }: FlavorProfileFormProps) {
                   id={attr}
                   name={attr}
                   min={1}
-                  max={10}
+                  max={5}
                   step={1}
                   value={values[attr]}
                   onChange={(e) =>
@@ -111,7 +111,7 @@ export function FlavorProfileForm({ roastSessions }: FlavorProfileFormProps) {
                 />
                 <div className="flex justify-between text-xs text-muted-foreground">
                   <span>1</span>
-                  <span>10</span>
+                  <span>5</span>
                 </div>
               </div>
             ))}

@@ -38,7 +38,7 @@ export function SpiderChart({ data }: SpiderChartProps) {
         />
         <PolarRadiusAxis
           angle={90}
-          domain={[0, 10]}
+          domain={[0, 5]}
           tick={false}
           axisLine={false}
         />

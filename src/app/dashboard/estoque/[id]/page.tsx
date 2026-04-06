@@ -107,7 +107,7 @@ export default async function LotDetailPage({
                   ].map((item) => (
                     <div key={item.label} className="flex flex-col items-center gap-1">
                       <span className="text-muted-foreground">{item.label}</span>
-                      <span className="font-semibold text-sm">{item.value ?? 0}/10</span>
+                      <span className="font-semibold text-sm">{item.value ?? 0}/5</span>
                     </div>
                   ))}
                 </div>

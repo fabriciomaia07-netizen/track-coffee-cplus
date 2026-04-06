@@ -8,11 +8,11 @@ const optionalNumber = z.preprocess(
 export const flavorProfileSchema = z.object({
   roast_session_id: z.string().uuid().optional().or(z.literal("")),
   green_coffee_lot_id: z.string().uuid().optional().or(z.literal("")),
-  acidity: z.coerce.number().min(1).max(10),
-  body: z.coerce.number().min(1).max(10),
-  sweetness: z.coerce.number().min(1).max(10),
-  bitterness: z.coerce.number().min(1).max(10),
-  aftertaste: z.coerce.number().min(1).max(10),
+  acidity: z.coerce.number().min(1).max(5),
+  body: z.coerce.number().min(1).max(5),
+  sweetness: z.coerce.number().min(1).max(5),
+  bitterness: z.coerce.number().min(1).max(5),
+  aftertaste: z.coerce.number().min(1).max(5),
   tasting_notes: z.string().optional(),
   sca_score: optionalNumber,
 });

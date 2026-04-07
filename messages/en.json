@@ -29,6 +29,7 @@
     "roastedCoffee": "Roasted Coffee",
     "catalog": "Catalog",
     "manuals": "Manuals",
+    "about": "About",
     "admin": "Admin"
   },
   "auth": {
@@ -258,5 +259,63 @@
     "userCreated": "User created successfully",
     "deleteUser": "Delete User",
     "confirmDelete": "Are you sure you want to delete this user?"
+  },
+  "about": {
+    "title": "How Track Coffee Works",
+    "subtitle": "Everything you need to know about the app and its features.",
+    "description": "Track Coffee is a management tool built for C+ coffee operations. It connects stores, organizes inventory, and supports training — all in one place.",
+    "purpose": "Designed for multi-store coffee businesses, Track Coffee helps teams stay aligned on stock levels, roast quality, recipes, and company standards. It serves as a central hub for daily operations and a foundation for scaling to new locations.",
+    "featuresTitle": "Features",
+    "rolesTitle": "User Roles",
+    "rolesAdmin": "Full access. Manages users, stores, and all data across locations.",
+    "rolesRoaster": "Records roast sessions, manages green and roasted inventory, creates flavor profiles.",
+    "rolesBarista": "Views inventory and catalog, follows recipes, accesses training manuals.",
+    "roaster": "Roaster",
+    "features": {
+      "inventory": {
+        "title": "Green Bean Inventory",
+        "desc": "Track green coffee stock per store — origin, variety, process, supplier, and quantity in kg."
+      },
+      "roasts": {
+        "title": "Roast Sessions",
+        "desc": "Log each roast with input/output weight. Weight loss is calculated automatically."
+      },
+      "roasted": {
+        "title": "Roasted Coffee",
+        "desc": "Roasted stock is created automatically from roast sessions and tracked separately."
+      },
+      "profiles": {
+        "title": "Flavor Profiles",
+        "desc": "Rate acidity, body, sweetness, bitterness, and aftertaste on a 1–5 scale with a spider chart."
+      },
+      "recipes": {
+        "title": "Recipes",
+        "desc": "Create and share brew recipes (V60, espresso, etc.) across stores with comments."
+      },
+      "catalog": {
+        "title": "Coffee Catalog",
+        "desc": "Browse all coffees available from C+ with images, origins, and processing methods."
+      },
+      "manuals": {
+        "title": "Barista Manuals",
+        "desc": "Access training documents for espresso, milk, filter coffee, cleaning, and workflows."
+      },
+      "import": {
+        "title": "Excel Import",
+        "desc": "Import green coffee inventory from Excel files with automatic catalog matching."
+      },
+      "multistore": {
+        "title": "Multi-Store",
+        "desc": "Each user belongs to a store. Data is organized and filtered by location."
+      },
+      "roles": {
+        "title": "Role-Based Access",
+        "desc": "Three roles — Admin, Roaster, Barista — each with appropriate permissions."
+      },
+      "dashboard": {
+        "title": "Dashboard & Overview",
+        "desc": "See total stock, recent roasts, low-stock alerts, and store comparisons at a glance."
+      }
+    }
   }
 }

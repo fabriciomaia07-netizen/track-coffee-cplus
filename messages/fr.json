@@ -29,6 +29,7 @@
     "roastedCoffee": "Café Torréfié",
     "catalog": "Catalogue",
     "manuals": "Manuels",
+    "about": "À propos",
     "admin": "Admin"
   },
   "auth": {
@@ -258,5 +259,63 @@
     "userCreated": "Utilisateur créé avec succès",
     "deleteUser": "Supprimer l'Utilisateur",
     "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet utilisateur ?"
+  },
+  "about": {
+    "title": "Comment fonctionne Track Coffee",
+    "subtitle": "Tout ce que vous devez savoir sur l'application et ses fonctionnalités.",
+    "description": "Track Coffee est un outil de gestion conçu pour les opérations café de C+. Il connecte les magasins, organise l'inventaire et soutient la formation — le tout en un seul endroit.",
+    "purpose": "Conçu pour les entreprises de café multi-magasins, Track Coffee aide les équipes à rester alignées sur les niveaux de stock, la qualité des torréfactions, les recettes et les standards de l'entreprise. Il sert de hub central pour les opérations quotidiennes et de fondation pour l'expansion vers de nouveaux emplacements.",
+    "featuresTitle": "Fonctionnalités",
+    "rolesTitle": "Rôles Utilisateurs",
+    "rolesAdmin": "Accès complet. Gère les utilisateurs, les magasins et toutes les données entre les sites.",
+    "rolesRoaster": "Enregistre les séances de torréfaction, gère l'inventaire vert et torréfié, crée des profils de saveur.",
+    "rolesBarista": "Consulte l'inventaire et le catalogue, suit les recettes, accède aux manuels de formation.",
+    "roaster": "Torréfacteur",
+    "features": {
+      "inventory": {
+        "title": "Inventaire Café Vert",
+        "desc": "Suivez le stock de café vert par magasin — origine, variété, processus, fournisseur et quantité en kg."
+      },
+      "roasts": {
+        "title": "Séances de Torréfaction",
+        "desc": "Enregistrez chaque torréfaction avec le poids d'entrée/sortie. La perte de poids est calculée automatiquement."
+      },
+      "roasted": {
+        "title": "Café Torréfié",
+        "desc": "Le stock torréfié est créé automatiquement à partir des séances et suivi séparément."
+      },
+      "profiles": {
+        "title": "Profils de Saveur",
+        "desc": "Évaluez l'acidité, le corps, la douceur, l'amertume et l'arrière-goût sur une échelle de 1 à 5 avec un graphique radar."
+      },
+      "recipes": {
+        "title": "Recettes",
+        "desc": "Créez et partagez des recettes d'infusion (V60, espresso, etc.) entre magasins avec commentaires."
+      },
+      "catalog": {
+        "title": "Catalogue des Cafés",
+        "desc": "Parcourez tous les cafés disponibles chez C+ avec images, origines et méthodes de traitement."
+      },
+      "manuals": {
+        "title": "Manuels Barista",
+        "desc": "Accédez aux documents de formation pour l'espresso, le lait, le café filtre, le nettoyage et les workflows."
+      },
+      "import": {
+        "title": "Import Excel",
+        "desc": "Importez l'inventaire de café vert depuis des fichiers Excel avec correspondance automatique du catalogue."
+      },
+      "multistore": {
+        "title": "Multi-Magasin",
+        "desc": "Chaque utilisateur appartient à un magasin. Les données sont organisées et filtrées par emplacement."
+      },
+      "roles": {
+        "title": "Accès par Rôle",
+        "desc": "Trois rôles — Admin, Torréfacteur, Barista — chacun avec les permissions appropriées."
+      },
+      "dashboard": {
+        "title": "Tableau de Bord",
+        "desc": "Voyez le stock total, les torréfactions récentes, les alertes de stock faible et les comparaisons entre magasins."
+      }
+    }
   }
 }

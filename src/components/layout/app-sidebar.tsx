@@ -23,6 +23,7 @@ import {
   Coffee,
   Library,
   FileText,
+  HelpCircle,
 } from "lucide-react";
 
 interface AppSidebarProps {
@@ -78,6 +79,11 @@ export function AppSidebar({ profile }: AppSidebarProps) {
       label: t("manuals"),
       href: "/dashboard/manuais",
       icon: FileText,
+    },
+    {
+      label: t("about"),
+      href: "/dashboard/sobre",
+      icon: HelpCircle,
     },
   ];
 
